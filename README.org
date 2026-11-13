@@ -1,16 +1,27 @@
 * LifeGPU
-Game of Life simulation on WebGPU
-(although we are currently simulating [[https://conwaylife.com/wiki/StarWars][StarWars]],
-because it looks more interesting :3)
+Game of Life¹ simulation on GPU,
+using the [[https://wiki.libsdl.org/SDL3/CategoryGPU][SDL3 GPU API]] for the native application
+and [[https://webgpu.org/][WebGPU]] for the browser version.
 
-Check if you can use WebGPU in your browser: https://caniuse.com/webgpu.
+1: We are currently simulating [[https://conwaylife.com/wiki/StarWars][StarWars]], because it looks more interesting :3
 
-E.g. in Firefox, go to =about:config= and set =dom.webgpu.enabled= to =true=.
-
+For running in the browser,
+first check if you [[https://caniuse.com/webgpu][can use WebGPU]]
+(e.g. in Firefox, go to =about:config=
+and set =dom.webgpu.enabled= to =true=).
 Then, visit [[https://42loco42.github.io/lifegpu]]!
+
+When running natively, you can additionally
+control the frame time to slow down the simulation,
+set a zoom level,
+run as a "screensaver" where the app exits on the first keypress
+and, if using a Wayland compositor that supports the [[https://wayland.app/protocols/wlr-layer-shell-unstable-v1][layer shell protocol]],
+run as an animated wallpaper in the background.
+
+Refer to the program's =--help= for further information.
 
 ** Controls
 - Press Space to step once
-- Press F to toggle fullscreen
+- Press F to toggle fullscreen (only in the web version)
 - Press P to toggle pause
 - Press R to reset the board

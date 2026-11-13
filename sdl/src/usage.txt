@@ -1,0 +1,7 @@
+usage: %s [options...]
+options:
+    -b | --background     Use the XDG Layer Shell protocol to render in background
+    -f | --frametime      Set desired frame time in milliseconds
+    -s | --screensaver    Run in "screensaver" mode; exit on any keypress
+    -z | --zoom           Zoom level (real number)
+    -h | --help           Show this help

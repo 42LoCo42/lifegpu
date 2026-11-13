@@ -1,0 +1,32 @@
+run: build
+	./build/lifegpu
+
+bg: build
+	./build/lifegpu -l
+
+build:
+	#!/usr/bin/env bash
+	if [ ! -d build ] || [ ! -f build/meson-private/coredata.dat ]; then just _wipe; fi
+	mkdir -p build/stamps
+
+	old="$(< build/stamps/src)"
+	new="$(find src -name '*.c' | sort)"
+	if [ "$old" != "$new" ]; then
+	  meson setup --reconfigure build
+	  echo "$new" > build/stamps/src
+	fi
+
+	old="$(< build/stamps/shaders)"
+	new="$(find src -name '*.glsl' -exec sha256sum {} \; | sort)"
+	if [ "$old" != "$new" ]; then
+		touch src/*.c
+		echo "$new" > build/stamps/shaders
+	fi
+
+	meson compile -v -C build
+
+wipe: _wipe
+	just run
+
+_wipe:
+	meson setup --wipe build

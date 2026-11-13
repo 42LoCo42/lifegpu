@@ -7,6 +7,45 @@
       in
       rec {
         packages = rec {
+          sdl = pkgs.stdenv.mkDerivation {
+            pname = "lifegpu-sdl";
+            version = "1.0.0";
+            src = mkSrc ./sdl;
+
+            __structuredAttrs = true;
+            strictDeps = true;
+
+            nativeBuildInputs = with pkgs; [
+              meson
+              ninja
+              pkg-config
+
+              shaderc
+              wayland-scanner
+
+              # infer shader stage from filename
+              (writeShellScriptBin "glslcx" ''
+                base="''${1%.glsl}"
+                stage="''${base##*.}"
+                glslc -fshader-stage="$stage" "$@"
+              '')
+            ];
+
+            buildInputs = with pkgs; [
+              sdl3
+              wayland
+              wayland-protocols
+              wlr-protocols
+            ];
+
+            preConfigure = ''
+              meson rewrite kwargs set project / version "$version"
+            '';
+
+            mesonBuildType = "release";
+            mesonFlags = [ "--werror" ];
+          };
+
           web = pkgs.stdenv.mkDerivation (drv: {
             pname = "lifegpu-web";
             version = "1.0.0";
@@ -31,11 +70,18 @@
             installPhase = "cp -r dist $out";
           });
 
-          default = pkgs.linkFarmFromDrvs "lifegpu" [ web ];
+          default = pkgs.linkFarmFromDrvs "lifegpu" [ sdl web ];
         };
 
         devShells.default = pkgs.mkShell {
-          inputsFrom = [ packages.default ];
+          inputsFrom = builtins.attrValues packages;
+
+          packages = with pkgs; [
+            clang-tools
+            gdb
+            just
+            valgrind
+          ];
         };
       }
     );
